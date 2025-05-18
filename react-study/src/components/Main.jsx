@@ -2,18 +2,21 @@ import Counter from "./Counter";
 import { useState } from "react";
 function Main() {
   const [total, setTotal] = useState(0);
+  const [flag, setFlag] = useState(false);
+
   const handleTotal = () => {
     setTotal(total + 1);
   };
   return (
     <main>
-      {total}
-      <br />
-      <br />
+      <h2>total : {total}</h2>
+      <h2>flag : {flag.toString()}</h2>
+      <button onClick={() => setFlag(!flag)}>toggle flag</button>
       <Counter onTotal={handleTotal} />
-      <br />
-      <br />
+      <hr />
       <Counter onTotal={handleTotal} />
+      <hr />
+      <Counter />
     </main>
   );
 }
