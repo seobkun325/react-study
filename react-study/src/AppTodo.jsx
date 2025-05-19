@@ -1,60 +1,70 @@
 import "./App.css";
 import TodoList from "./components/todo/TodoList";
-import { useState } from "react";
+import { useReducer, useState } from "react";
+import todoReducer from "./reducer/todo-reducer";
 function AppTodo(props) {
   const [todoText, setTodoText] = useState("");
-  const [todos, setTodos] = useState([
+  const [todos, dispatch] = useReducer(todoReducer, [
     { id: 0, text: "HTML&CSS 공부하기", done: false },
     { id: 1, text: "자바스크립트 공부하기", done: false },
   ]);
-
   const [insertAt, setInsertAt] = useState(todos.length - 1);
 
-  const handleReverse = () => {
-    const nextTodos = [...todos];
-    nextTodos.reverse();
-    setTodos(nextTodos);
-  };
-  const handleTodoTextChange = (e) => {
-    setTodoText(e.target.value);
-  };
-
+  // 1) added
   const handleAddTodo = () => {
-    const nextId = todos.length;
-    setTodos([...todos, { id: nextId, text: todoText, done: false }]);
+    dispatch({
+      type: "added",
+      nextId: todos.length,
+      todoText,
+    });
     setTodoText("");
   };
 
+  // 2) added_index
   const handleAddTodoByIndex = () => {
-    const nextId = todos.length;
-    const newTodos = [
-      ...todos.slice(0, insertAt),
-      { id: nextId, text: todoText, done: false },
-      ...todos.slice(insertAt),
-    ];
-    setTodos(newTodos);
+    dispatch({
+      type: "added_index",
+      insertAt,
+      nextId: todos.length,
+      todoText,
+    });
     setTodoText("");
   };
+
+  // 3) deleted
   const handleDeleteTodo = (deleteId) => {
-    const newTodo = todos.filter((item) => item.id !== deleteId);
-    setTodos(newTodo);
+    dispatch({
+      type: "deleted",
+      deleteId,
+    });
   };
+
+  // 4) done
+  const handleToggleTodo = (id, done) => {
+    dispatch({
+      type: "done",
+      id,
+      done,
+    });
+  };
+
+  // 5) reverse
+  const handleReverse = () => {
+    dispatch({
+      type: "reverse",
+    });
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleAddTodo();
     }
   };
-  const handleToggleTodo = (id, done) => {
-    // 기존 배열 안의 객체 속성을 변경!
-    // 새로운 거 만들어야함
-    const nextTodos = todos.map((item) => {
-      if (item.id === id) {
-        return { ...item, done };
-      }
-      return item;
-    });
-    setTodos(nextTodos);
+
+  const handleTodoTextChange = (e) => {
+    setTodoText(e.target.value);
   };
+
   return (
     <div>
       <h2>할일목록</h2>
